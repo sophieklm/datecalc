@@ -24,18 +24,20 @@ def parse(tokens):
             next_tok[1]
         )
     else:
-        return ("WordToken", tok[1])
+        return ("WordTree", tok[1])
 
 def evaluate(tree):
-    if tree[1] == "today":
-        return ("DateValue", date.today())
-    elif tree[1] == "tomorrow":
-        return (
-            "DateValue",
-            date.today() + timedelta(days=1)
-    )
-    else:
+    if tree[0] == "LengthTree":
         return ("LengthValue", int(tree[1]))
+    elif tree[0] == "WordTree":
+        if tree[1] == "today":
+            return ("DateValue", date.today())
+        elif tree[1] == "tomorrow":
+            return (
+                "DateValue",
+                date.today() + timedelta(days=1)
+        )
+
 
 # -- tests --
 assert lex("today") == [("WordToken", "today")]
@@ -43,7 +45,7 @@ assert lex("today") == [("WordToken", "today")]
 def p(x):
     return parse(lex(x))
 
-assert p("today") == ("WordToken", "today")
+assert p("today") == ("WordTree", "today")
 
 def e(x):
     return evaluate(parse(lex(x)))
@@ -54,7 +56,7 @@ assert e("today") == ("DateValue", today)
 
 assert lex("tomorrow") == [("WordToken", "tomorrow")]
 
-assert p("tomorrow") == ("WordToken", "tomorrow")
+assert p("tomorrow") == ("WordTree", "tomorrow")
 
 def days(n):
     return timedelta(days=n)
