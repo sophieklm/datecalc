@@ -16,7 +16,15 @@ def lex(input):
 
 def parse(tokens):
     tok = tokens[0]
-    return ("WordToken", tok[1])
+    if tok[0] == "NumberToken":
+        next_tok = tokens[1]
+        return (
+            "LengthTree",
+            tok[1],
+            next_tok[1]
+        )
+    else:
+        return ("WordToken", tok[1])
 
 def evaluate(tree):
     if tree[1] == "today":
@@ -26,6 +34,8 @@ def evaluate(tree):
             "DateValue",
             date.today() + timedelta(days=1)
     )
+    else:
+        return ("LengthValue", int(tree[1]))
 
 # -- tests --
 assert lex("today") == [("WordToken", "today")]
@@ -60,6 +70,13 @@ assert (
         ("WordToken", "days")
     ]
 )
+
+assert (
+    p("2 days") ==
+    ("LengthTree", "2", "days")
+)
+
+assert e("2 days") == ("LengthValue", 2)
 
 print "All tests passing"
 
