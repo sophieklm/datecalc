@@ -2,8 +2,17 @@
 from datetime import date, timedelta
 
 # -- functions --
+def make_token(word):
+    if word[0] in "0123456789":
+        return ("NumberToken", word)
+    else:
+        return ("WordToken", word)
+
 def lex(input):
-    return [("WordToken", input)]
+    return [
+        make_token(word)
+        for word in input.split(" ")
+    ]
 
 def parse(tokens):
     tok = tokens[0]
@@ -42,6 +51,14 @@ def days(n):
 
 assert (
     e("tomorrow") == ("DateValue", today + days(1))
+)
+
+assert (
+    lex("2 days") ==
+    [
+        ("NumberToken", "2"),
+        ("WordToken", "days")
+    ]
 )
 
 print "All tests passing"
