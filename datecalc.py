@@ -5,6 +5,8 @@ from datetime import date, timedelta
 def make_token(word):
     if word[0] in "0123456789":
         return ("NumberToken", word)
+    if word[0] in "+-/*":
+        return ("OperatorToken", word)
     else:
         return ("WordToken", word)
 
@@ -101,6 +103,16 @@ assert(
 )
 
 assert e("3 weeks") == ("LengthValue", 21)
+
+assert (
+    lex("today + 3 days") ==
+    [
+        ("WordToken", "today"),
+        ("OperatorToken", "+"),
+        ("NumberToken", "3"),
+        ("WordToken", "days"),
+    ]
+)
 
 print "All tests passing"
 
