@@ -16,17 +16,20 @@ def lex(input):
         for word in input.split(" ")
     ]
 
-def parse(tokens):
+def parse(tokens, so_far=None):
+    if len(tokens) == 0:
+        return so_far
     tok = tokens[0]
+    remaining_toks = tokens[1:]
     if tok[0] == "NumberToken":
         next_tok = tokens[1]
-        return (
-            "LengthTree",
-            tok[1],
-            next_tok[1]
-        )
+        return ("LengthTree", tok[1], next_tok[1])
+    elif tok[0] == "OperatorToken":
+        return ("OperatorTree",
+            tok[1], so_far, parse(remaining_toks))
     else:
-        return ("WordTree", tok[1])
+        return parse(
+            remaining_toks, ("WordTree", tok[1]))
 
 def evaluate(tree):
     if tree[0] == "LengthTree":
@@ -112,6 +115,15 @@ assert (
         ("NumberToken", "3"),
         ("WordToken", "days"),
     ]
+)
+
+assert (
+    p("today + 3 days") ==
+    ("OperatorTree",
+        "+",
+        ("WordTree", "today"),
+        ("LengthTree", "3", "days")
+    )
 )
 
 print "All tests passing"
