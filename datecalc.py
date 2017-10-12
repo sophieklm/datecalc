@@ -28,7 +28,7 @@ def parse(tokens):
 
 def evaluate(tree):
     if tree[0] == "LengthTree":
-        return ("LengthValue", int(tree[1]))
+        return ("LengthValue", length_tree_in_dayes(tree))
     elif tree[0] == "WordTree":
         if tree[1] == "today":
             return ("DateValue", date.today())
@@ -38,6 +38,13 @@ def evaluate(tree):
                 date.today() + timedelta(days=1)
         )
 
+def length_tree_in_dayes(length_tree):
+    number = int(length_tree[1])
+    unit = length_tree[2]
+    if unit == "weeks":
+        return number * 7
+    else:
+        return number
 
 # -- tests --
 assert lex("today") == [("WordToken", "today")]
@@ -79,6 +86,21 @@ assert (
 )
 
 assert e("2 days") == ("LengthValue", 2)
+
+assert (
+    lex("3 weeks") ==
+    [
+        ("NumberToken", "3"),
+        ("WordToken", "weeks")
+    ]
+)
+
+assert(
+    p("3 weeks") ==
+    ("LengthTree", "3", "weeks")
+)
+
+assert e("3 weeks") == ("LengthValue", 21)
 
 print "All tests passing"
 
