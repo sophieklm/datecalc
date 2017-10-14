@@ -34,6 +34,13 @@ def parse(tokens, so_far=None):
 def evaluate(tree):
     if tree[0] == "LengthTree":
         return ("LengthValue", length_tree_in_dayes(tree))
+    elif tree[0] == "OperatorTree":
+        left = evaluate(tree[2])
+        right = evaluate(tree[3])
+        return (
+            "DateValue",
+            left[1] + timedelta(days=right[1])
+        )
     elif tree[0] == "WordTree":
         if tree[1] == "today":
             return ("DateValue", date.today())
@@ -124,6 +131,16 @@ assert (
         ("WordTree", "today"),
         ("LengthTree", "3", "days")
     )
+)
+
+assert (
+    e("today + 3 days") ==
+    ("DateValue", today + days(3))
+)
+
+assert (
+    e("tomorrow + 1 day") ==
+    ("DateValue", today + days(2))
 )
 
 print "All tests passing"
