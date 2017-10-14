@@ -1,5 +1,6 @@
 # -- imports --
 from datetime import date, timedelta
+import sys
 
 # -- functions --
 def make_token(word):
@@ -146,3 +147,18 @@ assert (
 print "All tests passing"
 
 # -- main --
+
+def pretty(value):
+    if value[0] =="DateValue":
+        return value[1].strftime("%Y-%m-%d (%A)")
+    else:
+        return "%s days" % value[1]
+
+while True:
+    ln = sys.stdin.readline()
+    if ln is None or ln.strip() == "":
+        break
+    sys.stdout.write(
+        "%s\n" %
+        pretty(evaluate(parse(lex(ln.strip()))))
+    )
